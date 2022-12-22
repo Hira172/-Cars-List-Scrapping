@@ -36,7 +36,7 @@ const credentials  = {
     user: process.env.PGUSER,
     password: process.env.PGPASSWORD,
     database: process.env.PGDATABASE,
-    max: 20
+    max: 40
 }
   
 
