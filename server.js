@@ -18,7 +18,7 @@ app.use(express.json());
 
 
 
-const PORT = process.env.PORT || 8080;
+const PORT = 8080;
 
 
 app.use(function (err, req, res, next) {
