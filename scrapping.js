@@ -10,6 +10,7 @@ async function start(url,fields){
     const browser = await puppeteer.launch({
         headless: true,
         executablePath: require('puppeteer').executablePath(),
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
         ignoreDefaultArgs: ['--disable-extensions']
     })
     const page = await browser.newPage()
@@ -34,7 +35,9 @@ async function start(url,fields){
 async function scrapping(id){
     const browser = await puppeteer.launch({
         headless: true, 
-        executablePath: require('puppeteer').executablePath()
+        executablePath: require('puppeteer').executablePath(),
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        ignoreDefaultArgs: ['--disable-extensions']
     })
     const page = await browser.newPage()
     let result = {}
