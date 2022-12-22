@@ -9,7 +9,8 @@ const fs = require('fs');
 async function start(url,fields){
     const browser = await puppeteer.launch({
         headless: true,
-        executablePath: require('puppeteer').executablePath()
+        executablePath: require('puppeteer').executablePath(),
+        ignoreDefaultArgs: ['--disable-extensions']
     })
     const page = await browser.newPage()
     await page.goto(url,{ timeout: 0})
