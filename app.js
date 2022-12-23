@@ -36,7 +36,7 @@ async function processing(car_id){
         user: process.env.PGUSER,
         password: process.env.PGPASSWORD,
         database: process.env.PGDATABASE,
-        max: 20,
+        max: 200,
         idleTimeoutMillis: 60000,
         connectionTimeoutMillis: 30000,
       })

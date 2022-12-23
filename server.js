@@ -42,7 +42,7 @@ const credentials  = {
 
 app.get("/scrapping", (req, res, next) => { 
     var pool = new Pool(credentials)
-    var limit = 10
+    var limit = 100
     query = `
         select car_id from en 
         order by car_id  desc
