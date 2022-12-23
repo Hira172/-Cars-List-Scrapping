@@ -72,9 +72,9 @@ async function scrapping(id){
         const fimgb = await fimg.buffer()
         const metadata = await sharp(fimgb).metadata()
         let src= await sharp(fimgb).extract({
-                top: 20,
+                top: 30,
                 left:0,
-                height: metadata.height-20,
+                height: metadata.height-60,
                 width: metadata.width,
             }).toFormat('jpeg').toBuffer();
         temparrayimg.push("data:image/jpeg" + ";base64," + src.toString('base64'))
