@@ -60,13 +60,8 @@ async function scrapping(id){
         return {"images": srcs,"fields": fields}
     })
     let temparrayimg=[]
-    let length
-    if (data.images.length<10){
-        length = data.images.length
-    } else{
-        length = 10
-    }
-    for(let i = 0;i<length;i++){
+    
+    for(let i = 0;i<data.images.length;i++){
         let source = data.images[i]
         const fimg = await fetch(source)
         const fimgb = await fimg.buffer()
