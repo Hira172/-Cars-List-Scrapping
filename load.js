@@ -3,7 +3,7 @@ let bodyParser = require('body-parser');
 const cors = require("cors");
 const { Pool } = require('pg')
 require("dotenv").config();
-const processing = require('./app'); 
+const processing = require('./app.js'); 
 
 
 
@@ -18,7 +18,7 @@ app.use(express.json());
 
 
 
-const PORT = 8080;
+const PORT = 3000;
 
 
 app.use(function (err, req, res, next) {
@@ -54,7 +54,7 @@ app.get("/scrapping",async (req, res, next) => {
         // res.status(200).send("Started from: "+ data.rows[0].car_id)
         // var start = parseInt(data.rows[0].car_id)
         res.status(200).send("started")
-        for (i = start; i<=limit ;i++){
+        for (i = start; i<=start+limit ;i++){
             await processing(i)
         }
     // })
