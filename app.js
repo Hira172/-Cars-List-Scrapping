@@ -1,6 +1,7 @@
 require("dotenv").config();   
 var scrapping = require('./scrapping.js')
 const fs = require('fs/promises');
+const axios = require('axios');
 const { Pool } = require('pg')
 
 async function loadImages(images, car_id, client){
@@ -42,9 +43,17 @@ async function processing(car_id){
     client.connect()
     .then(async () => {
         await loadImages(result.images, car_id, client)
-        let languages = ['en','fr','es','ru','de','it','gr','tr','ro','fi','se','no','pl']
+        // let languages = ['en','fr','es','ru','de','it','gr','tr','ro','fi','se','no','pl']
+        let languages = ['en']
         for (let i=0;i<languages.length;i++){
             await loadData(languages[i], result[languages[i]], car_id, client)
+            .then(()=>{
+                axios.get('http://127.0.0.1:5000/'+car_id)
+                .then(function (response) {
+                    console.log("By python: ",car_id, response.data);
+                })
+                .catch(err=>console.log(err.response))
+            })
         }
         console.log("Done with: ", car_id)
     })

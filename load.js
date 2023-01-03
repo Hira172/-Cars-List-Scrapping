@@ -2,8 +2,7 @@ const { Pool } = require('pg')
 require("dotenv").config();
 const processing = require('./app.js'); 
 
-
-
+notin = ['1268', '5100', '18667', '22083', '22080', '28736']
 
 
 const credentials  = {
@@ -26,11 +25,16 @@ SELECT car_id FROM en
 `
 pool.query(query)
 .then(async (res)=>{
+  pool.end();
   rows = res.rows
   for (let row in rows){
-    await processing(rows[row].id)
+    if(!notin.includes(rows[row].id))
+      await processing(rows[row].id)
   }
 })
-.catch((err) => console.error('Error executing query', err.stack))
+.catch((err) => {
+  console.error('Error executing query', err.stack)
+  pool.end();
+})
     
-pool.end();
+
