@@ -14,22 +14,28 @@ async function start(url,fields){
         ignoreDefaultArgs: ['--disable-extensions']
     })
     const page = await browser.newPage()
-    await page.goto(url,{ timeout: 0})
-    let object = {}
-    const data = await page.evaluate(()=> {
-        const data1 = Array.from(
-            document.querySelectorAll("body > main > div.Table_Data > div.Data > div > div > table > tbody > tr > td:nth-child(2)")
-          ).map((image) => image.textContent);
-        
-        return data1
-    })    
-    const dat = data
-    for (let i=0;i<fields.length;i++){
-        object[fields[i]] = dat[i]
+    try{
+        await page.goto(url,{ timeout: 0})
+        let object = {}
+        const data = await page.evaluate(()=> {
+            const data1 = Array.from(
+                document.querySelectorAll("body > main > div.Table_Data > div.Data > div > div > table > tbody > tr > td:nth-child(2)")
+            ).map((image) => image.textContent);
+            
+            return data1
+        })    
+        const dat = data
+        for (let i=0;i<fields.length;i++){
+            object[fields[i]] = dat[i]
+        }
+        await page.close()
+        await browser.close()
+        return object
     }
-    await page.close()
-    await browser.close()
-    return object
+    catch(e){
+        console.log(e)
+        return;
+    }
 }
 
 async function scrapping(id){

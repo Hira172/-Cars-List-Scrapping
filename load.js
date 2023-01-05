@@ -2,7 +2,7 @@ const { Pool } = require('pg')
 require("dotenv").config();
 const processing = require('./app.js'); 
 
-notin = ['1268', '5100', '18667', '22083', '22080', '28736']
+notin = ['1774','27327','38171','1268', '5100', '18667', '22083', '22080', '28736', '18569', '18659', '24672']
 
 
 const credentials  = {
