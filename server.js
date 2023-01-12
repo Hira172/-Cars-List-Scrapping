@@ -52,7 +52,13 @@ app.get("/scrapping", (req, res, next) => {
         res.status(200).send("Started from: "+ data.rows[0].car_id)
         var start = parseInt(data.rows[0].car_id)
         for (i = start+1; i<=start+limit ;i++){
+          try{
             await processing(i)
+          }
+          catch(err){
+            console.log(err)
+            console.log('ignore error')
+          }
         }
     })
     .catch((err) => next(err.stack))
