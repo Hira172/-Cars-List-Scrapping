@@ -53,7 +53,7 @@ app.get("/scrapping", (req, res, next) => {
         var start = parseInt(data.rows[0].car_id)
         for (i = start+1; i<=start+limit ;i++){
           try{
-            await processing(i)
+            await processing(i, pool)
           }
           catch(err){
             console.log(err)

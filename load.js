@@ -1,8 +1,6 @@
-const { Pool } = require('pg')
+const { Pool } = require('pg');
 require("dotenv").config();
 const processing = require('./app.js'); 
-
-notin = ['1774','27327','38171','1268', '5100', '18667', '22083', '22080', '28736', '18569', '18659', '24672']
 
 
 const credentials  = {
@@ -10,31 +8,41 @@ const credentials  = {
     port: process.env.PGPORT,
     user: process.env.PGUSER,
     password: process.env.PGPASSWORD,
-    database: process.env.PGDATABASE
+    database: process.env.PGDATABASE,
+    // idleTimeoutMillis: 60000,
+    // connectionTimeoutMillis: 30000,
 }
   
 
 
 var pool = new Pool(credentials)
-
 query = `
-SELECT all_ids AS id
-FROM generate_series((SELECT MIN(car_id) FROM en), (SELECT MAX(car_id) FROM en)) all_ids
-EXCEPT 
-SELECT car_id FROM en
+select car_id from en 
+        order by car_id  desc
+        limit 1
 `
 pool.query(query)
 .then(async (res)=>{
-  pool.end();
-  rows = res.rows
-  for (let row in rows){
-    if(!notin.includes(rows[row].id))
-      await processing(rows[row].id)
+  res.status(200).send("Started from: "+ data.rows[0].car_id)
+  var start = parseInt(data.rows[0].car_id)
+  for (i = start+1; i<=start+1000 ;i++){
+    try{
+      await processing(i, pool)
+    }
+    catch(err){
+      console.log(err)
+      console.log('ignore error')
+    }
   }
+      
+  
 })
 .catch((err) => {
   console.error('Error executing query', err.stack)
-  pool.end();
 })
-    
+.finally(async()=>{
+  print("Ending")
+  await pool.end()
+  print("end")
+})
 

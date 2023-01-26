@@ -26,39 +26,38 @@ async function loadData(table, data, car_id, client){
     .catch((err) => console.error('Error executing query', err.stack))
 }
 
-async function processing(car_id){
+async function processing(car_id, client){
     // car_id = "43733" // 21231, 44442
     console.log("Started for : ", car_id)
     var result = await scrapping(car_id)
     console.log("done scrapping: ", car_id)
-    const client = new Pool ({
-        host: process.env.PGHOST,
-        port: process.env.PGPORT,
-        user: process.env.PGUSER,
-        password: process.env.PGPASSWORD,
-        database: process.env.PGDATABASE,
-        idleTimeoutMillis: 60000,
-        connectionTimeoutMillis: 30000,
-      })
-    client.connect()
-    .then(async () => {
-        await loadImages(result.images, car_id, client)
-        // let languages = ['en','fr','es','ru','de','it','gr','tr','ro','fi','se','no','pl']
-        let languages = ['en']
-        for (let i=0;i<languages.length;i++){
-            await loadData(languages[i], result[languages[i]], car_id, client)
-            .then(()=>{
-                axios.get('http://127.0.0.1:5000/'+car_id)
-                .then(function (response) {
-                    console.log("By python: ",car_id, response.data);
+    var flag = false;
+    do{
+        try{
+            await loadImages(result.images, car_id, client)
+            // let languages = ['en','fr','es','ru','de','it','gr','tr','ro','fi','se','no','pl']
+            let languages = ['en']
+            for (let i=0;i<languages.length;i++){
+                await loadData(languages[i], result[languages[i]], car_id, client)
+                .then(()=>{
+                    // un comment
+                    // axios.get('http://127.0.0.1:5000/'+car_id)
+                    // .then(function (response) {
+                    //     console.log("By python: ",car_id, response.data);
+                    // })
+                    // .catch(err=>console.log(err.response))
                 })
-                .catch(err=>console.log(err.response))
-            })
+            }
+            console.log("Done with: ", car_id)
         }
-        console.log("Done with: ", car_id)
-    })
-    .catch((err) => console.error('connection error', err.stack))
-    .finally(()=>client.end())
+        catch(err){
+            console.error('connection error', err.stack)
+            await new Promise(r => setTimeout(r, 120000));
+            console.log("restarted")
+            flag = true;
+        }
+    }while(flag)
+   
     
 }
 
