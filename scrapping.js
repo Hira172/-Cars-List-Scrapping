@@ -59,9 +59,11 @@ async function scrapping(id){
             v = v.replace(".", '');
             fields.push(v)
         }
-            
+        
         const srcs = Array.from(
-            document.querySelectorAll(".product_box .Screenshots .ImgBox img")
+            document.querySelectorAll("body > main > div:nth-child(4) > div:nth-child(3) > div > div > div > a > span > img")
+            
+            // document.querySelectorAll(".product_box .Screenshots .ImgBox img")
           ).map((image) => image.getAttribute("src"));
         return {"images": srcs,"fields": fields}
     })
