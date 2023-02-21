@@ -62,8 +62,8 @@ async function addwatermark(img){
    
 }
 
-offset =47330-500
-limit  = 1000
+offset =47330-2-1000
+limit  = 10000
 var pool = new Pool(credentials)
 
 
@@ -78,12 +78,13 @@ async function loading(){
         res = res.rows
         await deleteImage(i)
         console.log("started loading images")
-        await Promise.all(res.map(async r=>{
-            if(r.image !== null || r.image !== undefined || r.image!==''){
+        for(j=0;j<20;j++){
+            r = res[j]
+            if(r && r.image !== null && r.image !== undefined && r.image!==''){
                 var img = await addwatermark(r.image)
                 await loadImage(r.car_id, img)
             }
-        }))
+        }
         console.log("Done adding images")
     }
 }
