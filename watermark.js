@@ -13,44 +13,62 @@ const credentials  = {
 }
 
 async function loadImage(car_id, image){
-    query = 'INSERT INTO images(car_id, image) VALUES ($1, $2);'
-    values =[car_id, image]
-    await pool.query(query, values)
-    .then(()=>{console.log("Updated ", car_id)})
-    .catch((err) => console.error('Error executing query', err.stack))
+    try{
+        query = 'INSERT INTO images(car_id, image) VALUES ($1, $2);'
+        values =[car_id, image]
+        await pool.query(query, values)
+        .then(()=>{console.log("Updated ", car_id)})
+        .catch((err) => console.error('Error executing query', err.stack))
+    }
+    catch(err){
+        console.log(err)
+    }
 }
   
 
 async function deleteImage(car_id){
-    query = 'DELETE FROM images WHERE car_id=$1;'
-    values =[car_id]
-    await pool.query(query, values)
-    .then(()=>{console.log("deleted ", car_id)})
-    .catch((err) => console.error('Error executing query', err.stack))
+    try{
+        query = 'DELETE FROM images WHERE car_id=$1;'
+        values =[car_id]
+        await pool.query(query, values)
+        .then(()=>{console.log("deleted ", car_id)})
+        .catch((err) => console.error('Error executing query', err.stack))
+    }
+    catch(err){
+        console.log(err)
+    }
 }
+    
+
   
 async function addwatermark(img){
-    if(img === null){
-        console.log("image is null")
-        return null
+    try{
+        if(img === null){
+            console.log("image is null")
+            return null
+        }
+        console.log("adding watermark")
+        img =  Buffer.from(img.split(',')[1], 'base64');
+        var image = await Jimp.read(img)
+        font = await Jimp.loadFont(Jimp.FONT_SANS_16_WHITE)
+        image = await image.print(font, 10, 10, 'solncar.com')
+        .quality(95)
+        .getBufferAsync('image/jpeg')
+        // .write('org.jpeg');
+        return "data:image/jpeg;base64," + image.toString('base64')
+    }catch(err){
+        console.log(err)
     }
-    console.log("adding watermark")
-    img =  Buffer.from(img.split(',')[1], 'base64');
-    var image = await Jimp.read(img)
-    font = await Jimp.loadFont(Jimp.FONT_SANS_16_WHITE)
-    image = await image.print(font, 10, 10, 'solncar.com')
-    .getBufferAsync('image/jpeg')
-    return "data:image/jpeg;base64," + image.toString('base64')
    
 }
 
-offset =2
-limit  = 500
+offset =47330-500
+limit  = 1000
 var pool = new Pool(credentials)
 
 
 async function loading(){
-    for (i=offset; i<offset+limit ;i++){
+    for (i=offset; i>offset-limit ;i--){
         console.log("started for ", i)
         query = `
         select car_id, image from images 
