@@ -3,15 +3,23 @@ var scrapping = require('./scrapping.js')
 const fs = require('fs/promises');
 const axios = require('axios');
 const { Pool } = require('pg')
+const Jimp = require('jimp');
 
 async function loadImages(images, car_id, client){
-    await Promise.all(images.map(img=>{
+    for (i=0;i<images.length && i<=20;i++){
+        img = images[i]
+        img =  Buffer.from(img.split(',')[1], 'base64');
+        var image = await Jimp.read(img)
+        font = await Jimp.loadFont(Jimp.FONT_SANS_16_WHITE)
+        image = await image.print(font, 10, 10, 'solncar.com')
+        .quality(90)  
+        .getBufferAsync('image/jpeg')
         query = 'INSERT INTO images(car_id, image) VALUES ($1, $2);'
-        values = [car_id, img]
+        values = [car_id, "data:image/jpeg;base64," + image.toString('base64')]
         client.query(query, values)
         .then((res) => console.log("Image added for", car_id))
         .catch((err) => console.error('Error executing query', err.stack))
-    }))
+    } 
 }
 
 
@@ -31,24 +39,24 @@ async function processing(car_id, client){
     console.log("Started for : ", car_id)
     var result = await scrapping(car_id)
     console.log("done scrapping: ", car_id)
-    var flag = false;
-    do{
+    // var flag = false;
+    // do{
         try{
             console.log("images :",result.images.length, "for car_id: ", car_id)
             await loadImages(result.images, car_id, client)
             // let languages = ['en','fr','es','ru','de','it','gr','tr','ro','fi','se','no','pl']
-            let languages = ['en']
-            for (let i=0;i<languages.length;i++){
-                await loadData(languages[i], result[languages[i]], car_id, client)
-                .then(()=>{
-                    // un comment
-                    // axios.get('http://127.0.0.1:5000/'+car_id)
-                    // .then(function (response) {
-                    //     console.log("By python: ",car_id, response.data);
-                    // })
-                    // .catch(err=>console.log(err.response))
-                })
-            }
+            // let languages = ['en']
+            // for (let i=0;i<languages.length;i++){
+            //     await loadData(languages[i], result[languages[i]], car_id, client)
+            //     .then(()=>{
+            //         // un comment
+            //         // axios.get('http://127.0.0.1:5000/'+car_id)
+            //         // .then(function (response) {
+            //         //     console.log("By python: ",car_id, response.data);
+            //         // })
+            //         // .catch(err=>console.log(err.response))
+            //     })
+            // }
             console.log("Done with: ", car_id)
         }
         catch(err){
@@ -57,7 +65,7 @@ async function processing(car_id, client){
             console.log("restarted")
             flag = true;
         }
-    }while(flag)
+    // }while(flag)
    
     
 }

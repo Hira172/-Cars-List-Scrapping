@@ -14,20 +14,25 @@ const credentials  = {
 }
   
 
-
+var limit =50
 var pool = new Pool(credentials)
 query = `
-select car_id from en 
-        order by car_id  desc
-        limit 1
+select car_id from en
+WHERE car_id not in (select car_id from images)
+order by car_id desc
+limit $1
 `
-pool.query(query)
+pool.query(query, [limit])
 .then(async (res)=>{
+  console.log("total results: ", res.rows.length)
   console.log("Started from: "+ res.rows[0].car_id)
+  console.log("Ending at: "+ res.rows[res.rows.length-1].car_id)
   var start = parseInt(res.rows[0].car_id)
-  for (i = start+1; i<=start+1000 ;i++){
+  // var start = res.rows[0].car_id
+  var end = parseInt(res.rows[res.rows.length-1].car_id)
+  for (i = start; i>=end ;i--){
     try{
-      await processing(i, pool)
+         await processing(i, pool)
     }
     catch(err){
       console.log(err)

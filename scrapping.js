@@ -87,11 +87,11 @@ async function scrapping(id){
     await page.close()
     await browser.close()
 
-    let languages = ['en','fr','es','ru','de','it','gr','tr','ro','fi','se','no','pl']
-    
-    for (let i=0;i<languages.length;i++){
-        result[languages[i]] = await start('https://qesot.com/cars/'+languages[i]+'/product/'+id+'/',fields)
-    }
+    // // let languages = ['en','fr','es','ru','de','it','gr','tr','ro','fi','se','no','pl']
+    // let languages = ['en']
+    // for (let i=0;i<languages.length;i++){
+    //     result[languages[i]] = await start('https://qesot.com/cars/'+languages[i]+'/product/'+id+'/',fields)
+    // }
     return result
 }
 
