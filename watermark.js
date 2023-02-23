@@ -52,7 +52,6 @@ async function addwatermark(img){
         var image = await Jimp.read(img)
         font = await Jimp.loadFont(Jimp.FONT_SANS_16_WHITE)
         image = await image.print(font, 10, 10, 'solncar.com')
-        .quality(95)
         .getBufferAsync('image/jpeg')
         // .write('org.jpeg');
         return "data:image/jpeg;base64," + image.toString('base64')

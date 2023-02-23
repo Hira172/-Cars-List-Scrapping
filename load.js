@@ -13,26 +13,30 @@ const credentials  = {
     // connectionTimeoutMillis: 30000,
 }
   
-
-var limit =50
+offset = 0
+var limit =500
 var pool = new Pool(credentials)
 query = `
 select car_id from en
 WHERE car_id not in (select car_id from images)
 order by car_id desc
+offset $2
 limit $1
 `
-pool.query(query, [limit])
+pool.query(query, [limit, offset])
 .then(async (res)=>{
+  var dataToScrapp = res.rows
   console.log("total results: ", res.rows.length)
   console.log("Started from: "+ res.rows[0].car_id)
   console.log("Ending at: "+ res.rows[res.rows.length-1].car_id)
   var start = parseInt(res.rows[0].car_id)
-  // var start = res.rows[0].car_id
   var end = parseInt(res.rows[res.rows.length-1].car_id)
-  for (i = start; i>=end ;i--){
+  for (counter = end; counter<=start ;counter++){
+    console.log(counter)
     try{
-         await processing(i, pool)
+      var temp = dataToScrapp.filter(dat=>{return parseInt(dat.car_id) === counter})
+      if(temp.length>0)
+        await processing(counter, pool)
     }
     catch(err){
       console.log(err)

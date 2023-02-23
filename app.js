@@ -6,16 +6,17 @@ const { Pool } = require('pg')
 const Jimp = require('jimp');
 
 async function loadImages(images, car_id, client){
-    for (i=0;i<images.length && i<=20;i++){
+    for (i=0;i<images.length && i<20;i++){
         img = images[i]
-        img =  Buffer.from(img.split(',')[1], 'base64');
-        var image = await Jimp.read(img)
-        font = await Jimp.loadFont(Jimp.FONT_SANS_16_WHITE)
-        image = await image.print(font, 10, 10, 'solncar.com')
-        .quality(90)  
-        .getBufferAsync('image/jpeg')
+        // img =  Buffer.from(img.split(',')[1], 'base64');
+        // var image = await Jimp.read(img)
+        // font = await Jimp.loadFont(Jimp.FONT_SANS_16_WHITE)
+        // image = await image.print(font, 10, 10, 'solncar.com')
+        // .quality(90)  
+        // .getBufferAsync('image/jpeg')
         query = 'INSERT INTO images(car_id, image) VALUES ($1, $2);'
-        values = [car_id, "data:image/jpeg;base64," + image.toString('base64')]
+        // values = [car_id, "data:image/jpeg;base64," + image.toString('base64')]
+        values = [car_id, img]
         client.query(query, values)
         .then((res) => console.log("Image added for", car_id))
         .catch((err) => console.error('Error executing query', err.stack))
