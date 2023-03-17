@@ -31,8 +31,8 @@ async function resize(img) { // Function name is same as of file name
  }
 
  
-offset = 0
-limit  = 200
+
+
 
 async function loadImage(car_id, image){
     query = `
@@ -45,12 +45,14 @@ async function loadImage(car_id, image){
     .then(()=>{console.log("Updated ", car_id)})
     .catch((err) => console.error('Error executing query', err.stack))
 }
+offset =17330
+limit  = 500
 
  var pool = new Pool(credentials)
  query = `
-    select car_id, (select image from images i where i.car_id=o.car_id limit 1) from images o
-    order by car_id desc
-    offset $1
+    select car_id, (select image from images i where i.car_id=o.car_id limit 1)  from en o
+    where car_id<=$1  and image is null
+    order by car_id  desc
     limit $2
  `
  pool.query(query,[offset, limit])
@@ -58,7 +60,7 @@ async function loadImage(car_id, image){
    console.log("Started from offset: ", offset, "limit: ", limit)
    res = res.rows
    await Promise.all(res.map(async r=>{
-        if(img !== ""){
+        if(r.image !== null || r.image !== undefined || r.image!==''){
             console.log("started for ", r.car_id)
             var img = await resize(r.image)
             await loadImage(r.car_id, img)
