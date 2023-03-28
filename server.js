@@ -41,7 +41,7 @@ const credentials  = {
 
 app.get("/scrapping", (req, res, next) => { 
     var pool = new Pool(credentials)
-    var limit = 100
+    var limit = 1000
     query = `
         select car_id from en 
         order by car_id  desc
@@ -51,9 +51,9 @@ app.get("/scrapping", (req, res, next) => {
     .then(async (data) => {
         res.status(200).send("Started from: "+ data.rows[0].car_id)
         var start = parseInt(data.rows[0].car_id)
-        for (i = start+1; i<=start+limit ;i++){
+        for (counter_ = start+1; counter_<=start+limit ;counter_++){
           try{
-            await processing(i, pool)
+            await processing(counter_, pool)
           }
           catch(err){
             console.log(err)
@@ -62,7 +62,9 @@ app.get("/scrapping", (req, res, next) => {
         }
     })
     .catch((err) => next(err.stack))
-    pool.end();
+    .finally(()=>{
+      pool.end();
+    })
   });
 
 app.get("/", (req, res) => { 
