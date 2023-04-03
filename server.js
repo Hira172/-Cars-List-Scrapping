@@ -49,8 +49,14 @@ app.get("/scrapping", (req, res, next) => {
     `
     pool.query(query)
     .then(async (data) => {
+      var start;
+      if(data.rows != undefined || data.rows != null || data.rows.length>0){
         res.status(200).send("Started from: "+ data.rows[0].car_id)
-        var start = parseInt(data.rows[0].car_id)
+         start = parseInt(data.rows[0].car_id)
+      }else{
+        res.status(200).send("Started from: 0")
+         start = 0
+      }
         for (counter_ = start+1; counter_<=start+limit ;counter_++){
           try{
             await processing(counter_, pool)
