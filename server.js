@@ -50,9 +50,9 @@ app.get("/scrapping", (req, res, next) => {
     pool.query(query)
     .then(async (data) => {
       var start;
-      if(data.rows != undefined || data.rows != null || data.rows.length>0){
+      if(data.rows !== undefined || data.rows !== null || data.rows.length>0){
         res.status(200).send("Started from: "+ data.rows[0].car_id)
-         start = parseInt(data.rows[0].car_id)
+         start = parseInt(data.rows[0].car_id)+1
       }else{
         res.status(200).send("Started from: 0")
          start = 0
